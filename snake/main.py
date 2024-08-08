@@ -13,3 +13,18 @@ segments = [snake.copy()]
 
 screen = pg.display.set_mode([WINDOW] * 2)
 clock = pg.time.Clock()
+
+while True:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            exit()
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_UP:
+                snake_dir = (0, -TILE_SIZE)
+            if event.key == pg.K_DOWN:
+                snake_dir = (0, TILE_SIZE)
+            if event.key == pg.K_LEFT:
+                snake_dir = (-TILE_SIZE, 0)
+            if event.key == pg.K_RIGHT:
+                snake_dir = (TILE_SIZE, 0)
+    screen.fill('black')
