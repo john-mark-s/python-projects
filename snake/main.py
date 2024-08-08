@@ -28,3 +28,14 @@ while True:
             if event.key == pg.K_RIGHT:
                 snake_dir = (TILE_SIZE, 0)
     screen.fill('black')
+
+    # Draw snake
+    [pg.draw.rect(screen, 'green', segment) for segment in segments]
+
+    # Move the snake
+    snake.move_ip(snake_dir)
+    segments.append(snake.copy())
+    segments = segments[-length:]
+
+    pg.display.flip()
+    clock.tick(60)
