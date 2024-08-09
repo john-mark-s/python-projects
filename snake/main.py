@@ -1,6 +1,6 @@
 '''
-YouTube Channel: Coder Space
-Tutorial used: https://www.youtube.com/watch?v=_-KjEgCLQFw
+First Tutorial: Coder Space, https://www.youtube.com/watch?v=_-KjEgCLQFw
+Second Tutorial: Clear Code, https://www.youtube.com/watch?v=QFvqStqPCRU
 
 '''
 
@@ -42,8 +42,10 @@ while True:
                 snake_dir = (TILE_SIZE, 0)
     screen.fill('black')
 
-    # Check borders
-    if snake.left < 0 or snake.right > WINDOW or snake.top < 0 or snake.bottom > WINDOW:
+    # Check borders and prevent self-eating
+    self_eating = pg.Rect.collidelist(snake, segments[:-1]) != -1
+
+    if snake.left < 0 or snake.right > WINDOW or snake.top < 0 or snake.bottom > WINDOW or self_eating:
         snake.center, food.center = get_random_position(), get_random_position()
         length, snake_dir = 1, (0, 0)
         segments = [snake.copy()]
