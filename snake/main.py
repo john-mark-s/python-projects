@@ -14,7 +14,9 @@ WINDOW = 700
 TILE_SIZE = 20
 
 RANGE = (TILE_SIZE // 2, WINDOW - TILE_SIZE // 2, TILE_SIZE)
-get_random_position = lambda: [randrange( * RANGE), randrange( * RANGE)]
+
+def get_random_position():
+    return [randrange( * RANGE), randrange( * RANGE)]
 
 screen = pg.display.set_mode((700, 700))
 clock = pg.time.Clock()
@@ -22,8 +24,8 @@ clock = pg.time.Clock()
 # Create a surface (to not have a black background), and convert it into a Rect (Rectangle)
 x_pos = 0 # can be used to generate animation by moving the test_surface
 
-rectangle_1_5 = pg.rect.Rect((0, 350, 100, 400))
-rectangle_6_10 = pg.rect.Rect((0, 350, 400, 100))
+rectangle_1_5 = pg.rect.Rect((0, 400, 100, 300))
+rectangle_6_10 = pg.rect.Rect((0, 350, 350, 100))
 
 # Snake
 snake = pg.rect.Rect([get_random_position()[0], get_random_position()[1], 20, 20]) # needs x, y, width and height
@@ -40,12 +42,12 @@ allowed_keys = {'K_UP': 1, 'K_DOWN': 1, 'K_LEFT': 1, 'K_RIGHT': 1}
 food = snake.copy()
 food.center = get_random_position()
 
-# surface_direction = "RIGHT"
-
 def snake_death():
-    global length, snake_dir, segments, allowed_keys, snake, food
+    global length, snake_dir, segments, allowed_keys, snake, food, rectangle
 
     snake.center, food.center = get_random_position(), get_random_position()
+    # zwischen 300 und 700
+    
     length, snake_dir = 1, (0, 0)
     segments = [snake.copy()]
     allowed_keys = {'K_UP': 1, 'K_DOWN': 1, 'K_LEFT': 1, 'K_RIGHT': 1}
@@ -84,15 +86,6 @@ while True:
     if rectangle_6_10.right > WINDOW:
         rectangle_6_10_v[0] *= -1
 
-    # if surface_direction == "RIGHT":
-    #     x_pos += 1
-    #     if x_pos == 500:
-    #         surface_direction = "LEFT"
-    # else:
-    #     x_pos -=1
-    #     if x_pos == 0:
-    #         surface_direction = "RIGHT"
-
     # Check borders and prevent self-eating
     self_eating = pg.Rect.collidelist(snake, segments[:-1]) != -1
 
@@ -115,25 +108,22 @@ while True:
     # Draw food
     pg.draw.ellipse(screen, 'purple', food)
 
-    # Draw blocks
-    if length <= 3:
-        pg.draw.rect(screen, 'blue', rectangle_1_5)
-        if pg.Rect.colliderect(snake, rectangle_1_5):
-            snake_death()
-        else:
-            None
-    elif length > 3 and length < 6:
-        pg.draw.rect(screen, 'light blue', rectangle_6_10)
-        if pg.Rect.colliderect(snake, rectangle_6_10):
-            snake_death()
-        else:
-            None
-    elif length >= 6:
-        pg.draw.rect(screen, 'blue', rectangle_1_5)
-        if pg.Rect.colliderect(snake, rectangle_1_5):
-            snake_death()
-        else:
-            None
+    # Determine the phase based on the current length
+    phase = ((length - 1) // 5) % 2
+
+    if phase == 0:
+        rectangle = rectangle_1_5
+        color = 'blue'
+    else:
+        rectangle = rectangle_6_10
+        color = 'light blue'
+
+    # Draw the selected rectangle
+    pg.draw.rect(screen, color, rectangle)
+
+    # Check for collision between the snake and the rectangle
+    if snake.colliderect(rectangle):
+        snake_death()
 
     # Draw snake
     [pg.draw.rect(screen, 'black', segment) for segment in segments] # need to pass a screen, color and rectangle
