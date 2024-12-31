@@ -1,2 +1,5 @@
+# snake
 pygame
+
+# In progress projects
 python-dotenv
